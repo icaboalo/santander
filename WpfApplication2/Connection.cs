@@ -9,17 +9,16 @@ using System.Windows.Controls;
 
 namespace WpfApplication2 {
     class Connection {
-        public static SqlConnection addConnection() {
-            SqlConnection con = new SqlConnection("");
-
+        public static SqlConnection addConnection() { 
             try {
-                con.Open();
-            } catch {
-                MessageBox.Show("No se pudo conectar...");
-                con = null;
+                SqlConnection connection = new SqlConnection("Data Source=localhost;Initial Catalog=bitcoin;Integrated Security=True");
+                connection.Open();
+                return connection;
             }
-
-            return con;
+            catch (Exception e){
+                MessageBox.Show("No se pudo conectar a la base de datos.");
+                return null;
+            }
         }
 
         public static void loadCountries(ComboBox cb) {
@@ -32,6 +31,23 @@ namespace WpfApplication2 {
                 }
                 con.Close();
             }
+        }
+
+        public static void loadClients(DataGrid dataGrid)
+        {
+            SqlConnection con = addConnection();
+            List<Client> list = new List<Client>();
+            if (con != null)
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM cliente;", con);
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    list.Add(new Client(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), Transaction.getClientBalance(reader.GetInt32(0))));
+                }
+            }
+
+            dataGrid.ItemsSource = list;
         }
     }
 }

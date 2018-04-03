@@ -28,11 +28,26 @@ namespace WpfApplication2 {
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
+            MessageBox.Show("Cliente a: " + (cbA.SelectedValue as Client).idClient + " cliente b: " + (cbB.SelectedValue as Client).idClient);
+            Transaction transaction = new Transaction(float.Parse(tbBalance.Text), (cbB.SelectedValue as Client).idClient);
+            if (transaction.saveTransaction((cbA.SelectedValue as Client).idClient) > 0)
+            {
+                MessageBox.Show("Transferencia enviada!");
+            } else
+            {
 
+            }
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            List<Client> list = Client.getClientsByCountry(cbCountries.SelectedValue.ToString());
+            cbA.ItemsSource = list;
+            cbB.ItemsSource = list;
+        }
 
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            new Balance(this).Show();
         }
     }
 }
